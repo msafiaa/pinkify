@@ -239,3 +239,88 @@ youtubeLoadButton.addEventListener("click", () => {
 });
 
 }
+
+
+/* ===== PINKIFY SONG SEARCH ===== */
+
+const searchResults = document.getElementById("search-results");
+
+if (youtubeInput && youtubeLoadButton && searchResults) {
+  youtubeInput.placeholder = "Search songs or artists...";
+
+  youtubeLoadButton.textContent = "Search";
+
+  youtubeLoadButton.addEventListener("click", async () => {
+    const query = youtubeInput.value.trim();
+
+    if (!query) {
+      youtubeStatus.textContent = "Please enter a song or artist name.";
+      return;
+    }
+
+    youtubeStatus.textContent = "Searching for songs...";
+    searchResults.replaceChildren();
+
+    try {
+      const response = await fetch(
+        `https://fictional-rotary-phone-jj7g576gv54phprjr-5000.app.github.dev/api/search?q=${encodeURIComponent(query)}`
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Search failed.");
+      }
+
+      if (!data.results.length) {
+        youtubeStatus.textContent = "No songs found. Try another search.";
+        return;
+      }
+
+      data.results.forEach((song) => {
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "search-result-card";
+
+        const thumbnail = document.createElement("img");
+        thumbnail.src = song.thumbnail;
+        thumbnail.alt = "";
+        thumbnail.loading = "lazy";
+
+        const details = document.createElement("span");
+        details.className = "search-result-details";
+
+        const title = document.createElement("strong");
+        title.textContent = song.title;
+
+        const channel = document.createElement("small");
+        channel.textContent = song.channel;
+
+        details.append(title, channel);
+        card.append(thumbnail, details);
+
+        card.addEventListener("click", () => {
+          youtubeInput.value = song.videoId;
+
+          if (
+            youtubePlayer &&
+            typeof youtubePlayer.loadVideoById === "function"
+          ) {
+            youtubePlayer.loadVideoById(song.videoId);
+            youtubeStatus.textContent = `Playing: ${song.title}`;
+          } else {
+            youtubeStatus.textContent =
+              "YouTube player is still loading. Please try again.";
+          }
+        });
+
+        searchResults.appendChild(card);
+      });
+
+      youtubeStatus.textContent =
+        `Found ${data.results.length} songs. Choose one to play.`;
+    } catch (error) {
+      youtubeStatus.textContent = error.message;
+    }
+  });
+}
