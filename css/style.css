@@ -632,3 +632,58 @@ body {
     font-size: 12px;
   }
 }
+
+
+/* ===== PINKIFY PAGINATION ===== */
+
+.search-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 28px 0;
+  font-family: inherit;
+}
+
+.search-pagination .page-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #f2c5d8;
+  border-radius: 12px;
+  background: #fff8fb;
+  color: #a74670;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.search-pagination .page-button:hover {
+  background: #fce4ef;
+  border-color: #e8a0bd;
+  transform: translateY(-2px);
+}
+
+.search-pagination .page-button.active {
+  background: #d95f96;
+  border-color: #d95f96;
+  color: #ffffff;
+  box-shadow: 0 4px 12px #d95f9633;
+}
+
+.search-pagination .page-button:focus-visible {
+  outline: 3px solid #f3b4cf;
+  outline-offset: 3px;
+}
+
+.search-pagination span {
+  padding: 0 4px;
+  color: #b77a96;
+  font-size: 14px;
+}

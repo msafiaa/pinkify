@@ -16,6 +16,11 @@ YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search"
 def search_songs():
     query = request.args.get("q", "").strip()
 
+    page = request.args.get("page", 1, type=int)
+
+    if page < 1 or page > 6:
+        return jsonify({"error": "Invalid page number."}), 400
+
     if not query:
         return jsonify({"error": "Please enter a song or artist name."}), 400
 
@@ -30,7 +35,8 @@ def search_songs():
                 "q": f"{query} music",
                 "type": "video",
                 "videoEmbeddable": "true",
-                "maxResults": 10,
+                "maxResults": 8,
+                "pageToken": request.args.get("pageToken", ""),
                 "key": YOUTUBE_API_KEY,
             },
             timeout=15,
@@ -58,7 +64,10 @@ def search_songs():
                 "thumbnail": snippet["thumbnails"]["medium"]["url"],
             })
 
-        return jsonify({"results": results})
+        return jsonify({
+            "results": results,
+            "nextPageToken": data.get("nextPageToken")
+        })
 
     except requests.RequestException:
         return jsonify({"error": "Could not connect to YouTube. Try again."}), 502
